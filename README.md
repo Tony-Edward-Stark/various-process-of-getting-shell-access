@@ -1,7 +1,7 @@
 # Various-process-of-getting-shell-access
 Here We'll discuss how to get a shell in multiple ways -->
 
-## For-Linuc-Remote-PC:
+## For-Linux-Remote-PC:
 
 First assume your **ATTACK/HACKER PC IP** is **10.10.201.217** & your **REMOTE/ATTACKING/TARGET PC IP** is **10.10.152.101**
 

